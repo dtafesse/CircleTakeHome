@@ -33,7 +33,7 @@ test('updates latest payments every second 3 times', async () => {
 
   render(<LatestPayments />);
 
-  expect(screen.getByText(/loading/i)).toBeInTheDocument();
+  expect(screen.getByRole('progressbar')).toBeInTheDocument();
   expect(getPaymentMocked).toHaveBeenCalledTimes(0);
 
   // advance the timers by three seconds.
@@ -52,4 +52,22 @@ test('updates latest payments every second 3 times', async () => {
   expect(await screen.findByText(secondPayment.date)).toBeInTheDocument();
   expect(await screen.findByText(thirdPayment.date)).toBeInTheDocument();
   expect(getPaymentMocked).toHaveBeenCalledTimes(3);
+});
+
+test('show error overlay on fetch fail', async () => {
+  getPaymentMocked.mockRejectedValue(new Error('test error'));
+
+  render(<LatestPayments />);
+
+  expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  expect(getPaymentMocked).toHaveBeenCalledTimes(0);
+
+  // advance the timers by 1 seconds.
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+
+  expect(
+    await screen.findByText(/Error fetching payments/i),
+  ).toBeInTheDocument();
 });
