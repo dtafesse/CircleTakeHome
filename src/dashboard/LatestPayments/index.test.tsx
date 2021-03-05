@@ -6,7 +6,7 @@ import {
   fireEvent,
   waitFor,
 } from '@testing-library/react';
-import LatestPayments from './index';
+import LatestPayments from './LatestPayments';
 import api from './api';
 import { createMockedFunction, examplePayments } from './testingUtil';
 
