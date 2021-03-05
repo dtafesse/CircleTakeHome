@@ -87,6 +87,7 @@ export default function LatestPaymentsTable({
   payments,
 }: LatestPaymentsTableProps) {
   const classes = useStyles();
+
   const [searchQuery, setSearchQuery] = useState('');
 
   // initialize filterdPayments to 'payments' prop, we will need a useEffect to capture updates to payments
@@ -127,12 +128,17 @@ export default function LatestPaymentsTable({
   }, [payments, searchQuery]);
 
   const handleSearchClear = () => {
+    // notice we are only resetting the search query state...
+    // the useEffect above will handle the empty query state, and reset the 'filtered' payments state
+    // back to the full list of payments that gets passed in as props
     setSearchQuery('');
   };
 
   const handleOnSearchChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
+    // notice we are only updatting the search query state...
+    // the useEffect above will handle the filtering of payments
     setSearchQuery(e.target.value);
   };
 

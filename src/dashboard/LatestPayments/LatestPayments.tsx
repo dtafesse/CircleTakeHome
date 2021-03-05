@@ -4,10 +4,12 @@ import LatestPaymentsTable from './LatestPaymentsTable';
 import { Payment } from './types';
 
 export default function LatestPayments() {
+  // getPayment fetch states
   const [status, setStatus] = useState<
     'idle' | 'pending' | 'success' | 'error'
   >('idle');
 
+  // history of the 25 latest payments
   const [payments, setPayments] = useState<Payment[]>([]);
 
   useEffect(() => {

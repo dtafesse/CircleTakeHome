@@ -1,46 +1,38 @@
-# Getting Started with Create React App
+# Client - getting started
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with Create React App](https://github.com/facebook/create-react-app).
+Same prerequisites as the client for both Node and Yarn
 
-## Available Scripts
+install the client dependencies and start the react app directory by doing the following commands in the client folder:
 
-In the project directory, you can run:
+yarn install
+yarn start
 
-### `yarn start`
-
-Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# running test scrips
 
-### `yarn test`
+once the client dependencies have been installed, go into the client folder and run:
+yarn test
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# design
 
-### `yarn build`
+This react app displays payment data that is accessible via the server provided.
+The get payments endpoint provides a new payment object every second. In order for the client to capture this updated payment, it calls the get payments endpoint every second at an interval. So polling implemented.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The client keeps a running history of the 25 latest payments. Every time a new payment is queried, it
+places this payment at the start of the list. Therefore, the table is sorted by date in descending order.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The LatestPayments component is the container component that handles polling and updating payment objects as needed. It then passes the list of payments and the loading/error states as props to the LatestPaymentsTable.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The LatestPaymentsTable component is responsible for rendering table, and the different possible app states (loading/error). It is also allows the end user to filter the list of payments. Within this component, it holds the list of 'filtered' payments... If the search query state is empty, this 'filtered' payments list is the same list as the full payments list that gets passed in as props. If the search query state is not empty, the payments list gets filtered as needed. The nice thing about this is that this whole logic/reactivity is defined in an useEffect.
 
-### `yarn eject`
+For ex: if the user searches for a specific sender's name, it will filter the payments list, but as new payments come in to this component, it will continue to filter the updated payments list and show the correct filtered payments only. So filtering still allows the user to see new payments that get queried that fit the search criteria.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# material-ui
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+I personally like the material look, so I decided to use material-ui as the framework for the pre-built in components
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# state-managment
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+I ended up just using local state to store store in these components. I did find a particular use case where i need global state, so I did not bring in redux or used React Context API
