@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  act,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import LatestPayments from './index';
 import api from './api';
 import { createMockedFunction, examplePayments } from './testingUtil';
@@ -70,4 +76,43 @@ test('show error overlay on fetch fail', async () => {
   expect(
     await screen.findByText(/Error fetching payments/i),
   ).toBeInTheDocument();
+});
+
+test('filtering payments', async () => {
+  const firstPayment = examplePayments[examplePayments.length - 1];
+  const secondPayment = examplePayments[examplePayments.length - 2];
+
+  const searchQuery = firstPayment.sender.name;
+
+  getPaymentMocked
+    .mockResolvedValueOnce(firstPayment)
+    .mockResolvedValueOnce(secondPayment);
+
+  render(<LatestPayments />);
+
+  act(() => {
+    jest.advanceTimersByTime(2000);
+  });
+
+  const searchField = screen.getByRole('textbox');
+  fireEvent.change(searchField, { target: { value: searchQuery } });
+
+  // the second payment will not have a field that macthes the first payment's sender name.
+  // so the element will be removed from the dom..
+  // we should only see the first payment
+  await waitFor(() => {
+    expect(screen.queryByText(firstPayment.sender.name)).toBeInTheDocument();
+    expect(
+      screen.queryByText(secondPayment.sender.name),
+    ).not.toBeInTheDocument();
+  });
+
+  // clearning the search field should reset the table to show the two payments
+  const clearIconButton = screen.getByRole('button');
+  fireEvent.click(clearIconButton);
+
+  await waitFor(() => {
+    expect(screen.queryByText(firstPayment.sender.name)).toBeInTheDocument();
+    expect(screen.queryByText(secondPayment.sender.name)).toBeInTheDocument();
+  });
 });
