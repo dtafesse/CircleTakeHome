@@ -29,10 +29,14 @@ The LatestPaymentsTable component is responsible for rendering table, and the di
 
 For ex: if the user searches for a specific sender's name, it will filter the payments list, but as new payments come in to this component, it will continue to filter the updated payments list and show the correct filtered payments only. So filtering still allows the user to see new payments that get queried that fit the search criteria.
 
+# typescript
+
+I ended up writing all of the components and tests using typescript. I really like having the type annotations, it helps catch simple bugs during refactoring.
+
 # material-ui
 
 I personally like the material look, so I decided to use material-ui as the framework for the pre-built in components
 
-# state-managment
+# state-management
 
 I ended up just using local state to store store in these components. I did find a particular use case where i need global state, so I did not bring in redux or used React Context API
