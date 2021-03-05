@@ -1,5 +1,7 @@
 # Client - getting started
 
+First start the server, the client expects the server to be running on http://localhost:8080.
+
 This project was bootstrapped with Create React App](https://github.com/facebook/create-react-app).
 Same prerequisites as the client for both Node and Yarn
 
