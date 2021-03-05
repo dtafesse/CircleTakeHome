@@ -15,5 +15,5 @@ export type Payment = {
 };
 
 export type PaymentResponse = {
-    data: Payment;
+  data: Payment;
 }

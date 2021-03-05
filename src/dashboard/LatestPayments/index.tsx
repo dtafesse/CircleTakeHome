@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from './api';
+import LatestPaymentsTable from './LatestPaymentsTable';
 import { Payment } from './types';
 
 export default function LatestPayments() {
@@ -81,28 +82,5 @@ export default function LatestPayments() {
     <div role="error">Error fetching Payments</div>;
   }
 
-  return (
-    <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th align="left">Sender</th>
-          <th align="right">Receiver</th>
-          <th align="right">Amount</th>
-          <th align="right">Currency</th>
-        </tr>
-      </thead>
-      <tbody>
-        {payments.map((p) => (
-          <tr key={p.id}>
-            <td>{p.date}</td>
-            <td>{p.sender.name}</td>
-            <td align="right">{p.receiver.name}</td>
-            <td align="right">{p.amount}</td>
-            <td align="right">{p.currency}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+  return <LatestPaymentsTable payments={payments} />;
 }
