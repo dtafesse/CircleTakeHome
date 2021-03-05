@@ -14,14 +14,19 @@ import {
   Toolbar,
   IconButton,
   InputAdornment,
+  CircularProgress,
+  Grid,
 } from '@material-ui/core';
 import { Payment } from './types';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
+import Error from '@material-ui/icons/Error';
+
+const tableHeight = 450;
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableContainer: {
-    height: 450,
+    height: tableHeight,
   },
   toolbarRoot: {
     paddingLeft: theme.spacing(2),
@@ -39,7 +44,23 @@ const useStyles = makeStyles((theme: Theme) => ({
   searchIcon: {
     paddingRight: theme.spacing(1),
   },
+  overlayContainer: {
+    height: tableHeight * 0.75,
+    display: 'flex',
+  },
 }));
+
+const TableOverlay = ({ children }: { children?: React.ReactNode }) => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.overlayContainer}>
+      <Grid container justify="center" alignItems="center">
+        {children}
+      </Grid>
+    </div>
+  );
+};
 
 /**
  *
@@ -55,10 +76,14 @@ const doSearch = (value: string | number, search: string) => {
 };
 
 type LatestPaymentsTableProps = {
+  isLoading?: boolean;
+  isError?: boolean;
   payments: Payment[];
 };
 
 export default function LatestPaymentsTable({
+  isLoading,
+  isError,
   payments,
 }: LatestPaymentsTableProps) {
   const classes = useStyles();
@@ -111,6 +136,54 @@ export default function LatestPaymentsTable({
     setSearchQuery(e.target.value);
   };
 
+  const renderLoadingOverlay = () => {
+    return (
+      <TableOverlay>
+        <CircularProgress />
+      </TableOverlay>
+    );
+  };
+
+  const renderErrorOverlay = () => {
+    return (
+      <TableOverlay>
+        <Grid container direction="column" justify="center" alignItems="center">
+          <Grid item xs={12}>
+            <Error color="error" fontSize="large" />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h6"> Error fetching payments... </Typography>
+          </Grid>
+        </Grid>
+      </TableOverlay>
+    );
+  };
+
+  const renderTable = () => (
+    <Table size="small" stickyHeader aria-label="latest payments table">
+      <TableHead>
+        <TableRow>
+          <TableCell>Date</TableCell>
+          <TableCell>Sender</TableCell>
+          <TableCell>Receiver</TableCell>
+          <TableCell align="right">Amount</TableCell>
+          <TableCell>Currency</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {filteredPayments.map((payment) => (
+          <TableRow key={payment.id}>
+            <TableCell>{payment.date}</TableCell>
+            <TableCell>{payment.sender.name}</TableCell>
+            <TableCell>{payment.receiver.name}</TableCell>
+            <TableCell align="right">{payment.amount}</TableCell>
+            <TableCell>{payment.currency}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
   return (
     <Paper>
       <Toolbar className={classes.toolbarRoot}>
@@ -143,28 +216,11 @@ export default function LatestPaymentsTable({
         />
       </Toolbar>
       <TableContainer className={classes.tableContainer}>
-        <Table size="small" stickyHeader aria-label="latest payments table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Sender</TableCell>
-              <TableCell>Receiver</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell>Currency</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredPayments.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell>{payment.date}</TableCell>
-                <TableCell>{payment.sender.name}</TableCell>
-                <TableCell>{payment.receiver.name}</TableCell>
-                <TableCell align="right">{payment.amount}</TableCell>
-                <TableCell>{payment.currency}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        {isLoading
+          ? renderLoadingOverlay()
+          : isError
+          ? renderErrorOverlay()
+          : renderTable()}
       </TableContainer>
     </Paper>
   );

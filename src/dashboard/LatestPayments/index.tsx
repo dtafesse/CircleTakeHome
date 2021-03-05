@@ -74,13 +74,11 @@ export default function LatestPayments() {
   const isLoading = status === 'idle';
   const isError = status === 'error';
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    <div role="error">Error fetching Payments</div>;
-  }
-
-  return <LatestPaymentsTable payments={payments} />;
+  return (
+    <LatestPaymentsTable
+      isLoading={isLoading}
+      isError={isError}
+      payments={payments}
+    />
+  );
 }
